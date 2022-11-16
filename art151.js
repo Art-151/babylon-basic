@@ -1,3 +1,5 @@
+
+
 //draw sphere at specified position of specified diameter
 function createSphere(x, y, z, diam, scene) {
     // babylon built-in 'sphere' shape.
@@ -31,7 +33,7 @@ function hexMat(hex, scene) {
     return mat;
 }
 
-//recreates p5 lerpColor functionalith with babylon
+//recreates p5 lerpColor functionality with babylon
 function babLerpColor(c1, c2, lerp, scene) {
     //convert from hex if hashtag present in input
     if (c1.indexOf('#') == 0) {
@@ -48,12 +50,88 @@ function babLerpColor(c1, c2, lerp, scene) {
     return new BABYLON.Color3(c.r, c.g, c.b);
 }
 
+
+
+//creates animation for a discrete property
+function discreteAnim(type, dim, start_val, sub_vals, frameRate, seconds) {
+    var anim_name;
+    var anim_type;
+    var keys = [];
+    if (Array.isArray(sub_vals) == false) {
+        sub_vals = [sub_vals];
+    }
+    for (let [i, val] of sub_vals.entries()) {
+        if (dim) {
+            anim_name = type + "_" + dim;
+            anim_type = type + "." + dim;
+            if (i == 0) {
+                keys.push(start_val[dim]);
+            }
+            keys.push(val[dim]);
+        } else {
+            anim_name = type;
+            anim_type = type;
+            if (i == 0) {
+                keys.push(start_val);
+            }
+            keys.push(val);
+        }
+    }
+
+    var anim = new BABYLON.Animation(anim_name, anim_type, frameRate, BABYLON.Animation.ANIMATIONTYPE_FLOAT, BABYLON.Animation.ANIMATIONLOOPMODE_CYCLE);
+    var keyFrames = [];
+
+    for (var j = 0; j < keys.length; j++) {
+        keyFrames.push({ frame: j * frameRate * (seconds), value: keys[j] });
+    }
+
+    anim.setKeys(keyFrames);
+    return anim;
+}
+
+
+function animate(animations, scene, seconds = 3, loop = false) {
+    //generates discrete animation to add to objects anims
+
+    var frameRate = 5;
+    var all_animations = [];
+    var start = 0;
+    if (Array.isArray(animations) == false) {
+        animations = [animations];
+    }
+    //iterate through each animation object
+    for (let anim of animations) {
+        anim.anims = [];
+
+        if (anim.dims) { //if there are dimensions, add one animation for each
+            for (const dim of anim.dims) {
+                anim.anims.push(discreteAnim(anim.prop, dim, anim.subj[anim.prop], anim.val, frameRate, seconds));
+            }
+        } else { //otherwise add just one animation
+            anim.anims.push(discreteAnim(anim.prop, false, anim.subj[anim.prop], anim.val, frameRate, seconds));
+        }
+
+        //initalize animationz
+        all_animations.push(anim.anims);
+        var anim_turns = 1;
+        if (Array.isArray(anim.val)) {
+            anim_turns = anim.val.length;
+        }
+        console.log(anim);
+        scene.beginDirectAnimation(anim.subj, anim.anims, 0, seconds * frameRate * anim_turns, loop);
+
+    }
+
+    return all_animations;
+}
+
+
 class meshModel {
     //model constructor
     constructor(file, scale = 1, x = 0, y = 0, z = 0, name = "mesh", scene) {
         //gen position variable based on XYZ values
-        var position = new BABYLON.Vector3(x, y, z);  
-        this.position = position; 
+        var position = new BABYLON.Vector3(x, y, z);
+        this.position = position;
 
         this.scale = scale; //scale based on user input
         this.name = name; //give mesh a name so it can be retrieved with getMeshes method
@@ -65,7 +143,7 @@ class meshModel {
         } else {
             folder = './'
         }
-        //place and scale each mesh in model 
+        //place and scale each mesh in model
         let model = BABYLON.SceneLoader.ImportMesh(
             null,
             folder,
@@ -79,14 +157,14 @@ class meshModel {
                 }
             }
         );
-      
+
     }
     //assigns an array of this model's meshes to this.meshes and returns it
     //MUST BE EXECUTED IN scene.executeWhenReady(() => {})
     getMeshes(meshes) {
         this.meshes = meshes.filter(mesh => mesh.name.slice(0, this.name.length) == this.name);
         return this.meshes;
-    } 
+    }
 
     //set x, y, and z rotation to values specified by
     rotate(x, y, z, scene) {
@@ -95,3 +173,4 @@ class meshModel {
         meshes.map(m => m.rotation = new BABYLON.Vector3(x, y, z));
     }
 }
+

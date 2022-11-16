@@ -1,5 +1,5 @@
 var canvas = document.getElementById("renderCanvas");
-var meshlist = []; 
+var meshlist = [];
 var startRenderLoop = function (engine, canvas) {
     engine.runRenderLoop(function () {
         if (sceneToRender && sceneToRender.activeCamera) {
@@ -31,9 +31,11 @@ var createScene = function () {
     // Default intensity is 1. Let's dim the light a small amount
     light.intensity = 0.7;
 
-    var newsphere = createSphere(0, 1, 0, 2);
+    var newsphere = createSphere(3, 1, 0, 2);
     newsphere.material = hexMat('#ff0000');
-    
+    var cloth = new meshModel('cloth_meshV1.glb', 10);
+
+    animate({subj: newsphere, prop: 'position', dims: ['x'], val: {x:5}}, scene);
     return scene;
 };
         window.initFunction = async function() {
@@ -57,3 +59,5 @@ initFunction().then(() => {sceneToRender = scene
 window.addEventListener("resize", function () {
     engine.resize();
 });
+
+
