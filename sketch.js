@@ -35,7 +35,8 @@ var createScene = function () {
     newsphere.material = hexMat('#ff0000');
 
 
-    animate({subj: newsphere, prop: 'position', dims: ['x'], val: {x:5}}, scene);
+    addClickEvent(newsphere, 'position', ['x', 'y', 'z'], new BABYLON.Vector3(3, 3, 3), scene)
+
     return scene;
 };
         window.initFunction = async function() {

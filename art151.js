@@ -117,7 +117,6 @@ function animate(animations, scene, seconds = 3, loop = false) {
         if (Array.isArray(anim.val)) {
             anim_turns = anim.val.length;
         }
-        console.log(anim);
         scene.beginDirectAnimation(anim.subj, anim.anims, 0, seconds * frameRate * anim_turns, loop);
 
     }
@@ -174,3 +173,18 @@ class meshModel {
     }
 }
 
+function addClickEvent(mesh, prop, dims, val, scene) {
+    scene.onReadyObservable.add(function () {
+        mesh.isPickable = true;
+        mesh.actionManager = new BABYLON.ActionManager(scene);
+        mesh.actionManager
+            .registerAction(
+                new BABYLON.ExecuteCodeAction(
+                    BABYLON.ActionManager.OnPickTrigger, function (bjsevt) {
+                        // console.log(bjsevt);
+                        animate({subj: mesh, prop: prop, dims:dims, val: val});
+                    }
+                )
+            )
+    });
+}
