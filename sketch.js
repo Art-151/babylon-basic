@@ -11,7 +11,7 @@ var startRenderLoop = function (engine, canvas) {
 var engine = null;
 var scene = null;
 var sceneToRender = null;
-var createDefaultEngine = function() { return new BABYLON.Engine(canvas, true, { preserveDrawingBuffer: true, stencil: true,  disableWebGL2Support: false}); };
+var createDefaultEngine = function () { return new BABYLON.Engine(canvas, true, { preserveDrawingBuffer: true, stencil: true, disableWebGL2Support: false }); };
 var createScene = function () {
     // This creates a basic Babylon Scene object (non-mesh)
     var scene = new BABYLON.Scene(engine);
@@ -34,26 +34,27 @@ var createScene = function () {
     var newsphere = createSphere(3, 1, 0, 2);
     newsphere.material = hexMat('#ff0000');
 
-
-    addClickEvent(newsphere, 'position', ['x', 'y', 'z'], new BABYLON.Vector3(3, 3, 3), scene)
+    animate({subj: newsphere.material, prop:'alpha',  val:0.2}, scene);
 
     return scene;
 };
-        window.initFunction = async function() {
-            var asyncEngineCreation = async function() {
-                try {
-                return createDefaultEngine();
-                } catch(e) {
-                console.log("the available createEngine function failed. Creating the default engine instead");
-                return createDefaultEngine();
-                }
-            }
+window.initFunction = async function () {
+    var asyncEngineCreation = async function () {
+        try {
+            return createDefaultEngine();
+        } catch (e) {
+            console.log("the available createEngine function failed. Creating the default engine instead");
+            return createDefaultEngine();
+        }
+    }
 
-            window.engine = await asyncEngineCreation();
-if (!engine) throw 'engine should not be null.';
-startRenderLoop(engine, canvas);
-window.scene = createScene();};
-initFunction().then(() => {sceneToRender = scene
+    window.engine = await asyncEngineCreation();
+    if (!engine) throw 'engine should not be null.';
+    startRenderLoop(engine, canvas);
+    window.scene = createScene();
+};
+initFunction().then(() => {
+    sceneToRender = scene
 });
 
 // Resize

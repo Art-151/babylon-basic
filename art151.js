@@ -173,8 +173,8 @@ class meshModel {
     }
 }
 
+//reference: https://playground.babylonjs.com/#G2F8LN#5
 function addClickEvent(mesh, prop, dims, val, scene) {
-    scene.onReadyObservable.add(function () {
         mesh.isPickable = true;
         mesh.actionManager = new BABYLON.ActionManager(scene);
         mesh.actionManager
@@ -186,5 +186,5 @@ function addClickEvent(mesh, prop, dims, val, scene) {
                     }
                 )
             )
-    });
+
 }
