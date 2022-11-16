@@ -33,7 +33,7 @@ var createScene = function () {
 
     var newsphere = createSphere(3, 1, 0, 2);
     newsphere.material = hexMat('#ff0000');
-    var cloth = new meshModel('cloth_meshV1.glb', 10);
+
 
     animate({subj: newsphere, prop: 'position', dims: ['x'], val: {x:5}}, scene);
     return scene;
